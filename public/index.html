@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Menu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>Food Menu</h1>
+
+    <p>
+        This application is ONLY for demonstrating a student's
+        web development skills.
+    </p>
+
+    <p id="status" role="status">Loading foods...</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Food</th>
+                <th scope="col">Price (CAD)</th>
+            </tr>
+        </thead>
+        <tbody id="food-list"></tbody>
+    </table>
+
+    <script>
+        // Fetches food items from the backend and displays them.
+        async function loadFoods() {
+            const status = document.getElementById("status");
+            const foodList = document.getElementById("food-list");
+
+            try {
+                const response = await fetch("/foods");
+
+                if (!response.ok) {
+                    throw new Error("Unable to fetch foods");
+                }
+
+                const foods = await response.json();
+                foodList.replaceChildren();
+
+                foods.forEach((food) => {
+                    const row = document.createElement("tr");
+                    const nameCell = document.createElement("td");
+                    const priceCell = document.createElement("td");
+
+                    nameCell.textContent = food.name;
+                    priceCell.textContent = `$${food.price.toFixed(2)}`;
+
+                    row.append(nameCell, priceCell);
+                    foodList.appendChild(row);
+                });
+
+                status.textContent = "";
+            } catch (error) {
+                console.error("Error loading foods:", error);
+                status.textContent = "Unable to load foods. Please try again.";
+            }
+        }
+
+        loadFoods();
+    </script>
+</body>
+</html>
